@@ -16,6 +16,11 @@ manager.register_agent(extraction_agent)
 manager.register_agent(abstraction_agent)
 manager.register_agent(synthesis_agent)
 
+# Activate the agents
+extraction_agent.activate()
+abstraction_agent.activate()
+synthesis_agent.activate()
+
 # Initialize the server manager
 server = ServerManager(manager)
 

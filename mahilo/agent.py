@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.traceback import install
 
 from mahilo.tools import get_chat_with_agent_tool
+from mahilo.session import Session
 
 console = Console()
 install()  # 
