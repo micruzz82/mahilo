@@ -1,10 +1,11 @@
 from mahilo.agent import BaseAgent
+
 class AbstractionAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             type='abstraction_agent',
             name='abstraction_agent',
-            description="This helper says important things in a different way.",
+            description="This helper says important things in a a different way.",
         )
     def paraphrase_sentences(self, text: str) -> str:
         """Paraphrases the sentences."""

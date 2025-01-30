@@ -1,4 +1,5 @@
 from mahilo.agent import BaseAgent
+
 class ExtractionAgent(BaseAgent):
     def __init__(self):
         super().__init__(
@@ -6,6 +7,7 @@ class ExtractionAgent(BaseAgent):
             name='extraction_agent',
             description="This helper picks out the most important words.",
         )
+
     def extract_key_phrases(self, text: str) -> str:
         """Picks the key phrases."""
         print("ExtractionAgent: extract_key_phrases called")  # for debugging
