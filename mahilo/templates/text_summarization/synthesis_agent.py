@@ -13,17 +13,29 @@ class SynthesisAgent(BaseAgent):
     def generate_summary(self, text: str) -> str:
         """Generates a summary."""
         print(f"SynthesisAgent: generate_summary called with: {text}")  # for debugging
-        summary = "Summary: " + text
+        summary = f"Summary: {text}"
         return summary
 
-    async def process_chat_message(self, message: str = None, websockets: List[WebSocket] = []) -> Dict[str, Any]:
+    async def process_queue_message(self, message: str = None, websockets: List[WebSocket] = []) -> None:
         """Process a message and generate a summary."""
         if not message:
-            return {"response": "", "activated_agents": []}
-
+            return
+        
+        if not isinstance(message, str):
+             print(f"Error: Invalid message format for SynthesisAgent. Message must be a string. Message: {message}")
+             return
+        
+        if message and "abstraction_agent" not in message:
+             print(f"Error: Invalid message format for SynthesisAgent. Message must contain `abstraction_agent`. Message: {message}")
+             return
+        
         summary = self.generate_summary(message)
-        response = f"SynthesisAgent: {summary}"
-        return {
-            "response": response,
-            "activated_agents": []
-        }
+
+        # Validate the output before sending
+        if not isinstance(summary, str) or "Summary:" not in summary:
+            print(f"Error: Invalid output from SynthesisAgent. Message: {summary}")
+            return
+        
+        for ws in websockets:
+            await ws.send_text(summary)
+        print(f"In process_queue_message: Response for {self.name}: {summary}")

@@ -13,18 +13,28 @@ class AbstractionAgent(BaseAgent):
     def paraphrase_sentences(self, text: str) -> str:
         """Paraphrases the sentences."""
         print(f"AbstractionAgent: paraphrase_sentences called with: {text}")  # for debugging
-        paraphrased = "Paraphrased: " + text
+        paraphrased = f"Paraphrased: {text}"
         self.chat_with_agent("synthesis_agent", paraphrased)
         return paraphrased
 
-    async def process_chat_message(self, message: str = None, websockets: List[WebSocket] = []) -> Dict[str, Any]:
+    async def process_queue_message(self, message: str = None, websockets: List[WebSocket] = []) -> None:
         """Process a message and pass it to the synthesis_agent."""
         if not message:
-            return {"response": "", "activated_agents": []}
+            return
+
+        if not isinstance(message, str):
+             print(f"Error: Invalid message format for AbstractionAgent. Message must be a string. Message: {message}")
+             return
+        if message and "extraction_agent" not in message:
+             print(f"Error: Invalid message format for AbstractionAgent. Message must contain `extraction_agent`. Message: {message}")
+             return
 
         paraphrased = self.paraphrase_sentences(message)
-        response = f"AbstractionAgent: {paraphrased}"
-        return {
-            "response": response,
-            "activated_agents": ["synthesis_agent"]
-        }
+        # Validate the output before sending
+        if not isinstance(paraphrased, str) or "Paraphrased:" not in paraphrased:
+            print(f"Error: Invalid output from AbstractionAgent. Message: {paraphrased}")
+            return
+
+        for ws in websockets:
+            await ws.send_text(paraphrased)
+        print(f"In process_queue_message: Response for {self.name}: {paraphrased}")
