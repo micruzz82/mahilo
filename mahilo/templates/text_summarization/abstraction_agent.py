@@ -17,19 +17,19 @@ class AbstractionAgent(BaseAgent):
         self.chat_with_agent("synthesis_agent", paraphrased)
         return paraphrased
 
-    async def process_queue_message(self, message: str = None, websockets: List[WebSocket] = []) -> None:
+    async def process_queue_message(self, message: Dict[str, str] = None, websockets: List[WebSocket] = []) -> None:
         """Process a message and pass it to the synthesis_agent."""
         if not message:
             return
 
-        if not isinstance(message, str):
-             print(f"Error: Invalid message format for AbstractionAgent. Message must be a string. Message: {message}")
+        if not isinstance(message, dict) or "sender" not in message or "content" not in message:
+             print(f"Error: Invalid message format for AbstractionAgent. Message must be a dictionary with 'sender' and 'content' keys. Message: {message}")
              return
-        if message and "extraction_agent" not in message:
+        if message and "extraction_agent" not in message["sender"]:
              print(f"Error: Invalid message format for AbstractionAgent. Message must contain `extraction_agent`. Message: {message}")
              return
 
-        paraphrased = self.paraphrase_sentences(message)
+        paraphrased = self.paraphrase_sentences(message["content"])
         # Validate the output before sending
         if not isinstance(paraphrased, str) or "Paraphrased:" not in paraphrased:
             print(f"Error: Invalid output from AbstractionAgent. Message: {paraphrased}")

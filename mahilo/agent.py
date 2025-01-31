@@ -524,7 +524,7 @@ class BaseAgent:
 
     def add_message_to_queue(self, message: str, sender: str) -> None:
         """Add a message to the agent's queue."""
-        self._queue.append(f"{sender}: {message}")
+        self._queue.append({"content": message, "sender": sender})
 
     def is_active(self) -> bool:
         """Check if the agent is active."""

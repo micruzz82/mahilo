@@ -17,20 +17,20 @@ class ExtractionAgent(BaseAgent):
         self.chat_with_agent("abstraction_agent", key_phrases)
         return key_phrases
 
-    async def process_queue_message(self, message: str = None, websockets: List[WebSocket] = []) -> None:
+    async def process_queue_message(self, message: Dict[str, str] = None, websockets: List[WebSocket] = []) -> None:
         """Process a message and pass it to the abstraction_agent."""
         if not message:
             return
         
-        if not isinstance(message, str):
-             print(f"Error: Invalid message format for ExtractionAgent. Message must be a string. Message: {message}")
+        if not isinstance(message, dict) or "sender" not in message or "content" not in message:
+             print(f"Error: Invalid message format for ExtractionAgent. Message must be a dictionary with 'sender' and 'content' keys. Message: {message}")
              return
         
-        if message and "extraction_agent" not in message:
+        if message and "extraction_agent" not in message["sender"]:
             print(f"Error: Invalid message format for ExtractionAgent. Message must contain `extraction_agent`. Message: {message}")
             return
 
-        key_phrases = self.extract_key_phrases(message)
+        key_phrases = self.extract_key_phrases(message["content"])
         # Validate the output before sending
         if not isinstance(key_phrases, str) or "Extracted key phrases from:" not in key_phrases:
             print(f"Error: Invalid output from ExtractionAgent. Message: {key_phrases}")

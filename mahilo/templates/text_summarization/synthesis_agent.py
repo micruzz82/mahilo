@@ -16,20 +16,20 @@ class SynthesisAgent(BaseAgent):
         summary = f"Summary: {text}"
         return summary
 
-    async def process_queue_message(self, message: str = None, websockets: List[WebSocket] = []) -> None:
+    async def process_queue_message(self, message: Dict[str, str] = None, websockets: List[WebSocket] = []) -> None:
         """Process a message and generate a summary."""
         if not message:
             return
         
-        if not isinstance(message, str):
-             print(f"Error: Invalid message format for SynthesisAgent. Message must be a string. Message: {message}")
+        if not isinstance(message, dict) or "sender" not in message or "content" not in message:
+             print(f"Error: Invalid message format for SynthesisAgent. Message must be a dictionary with 'sender' and 'content' keys. Message: {message}")
              return
         
-        if message and "abstraction_agent" not in message:
+        if message and "abstraction_agent" not in message["sender"]:
              print(f"Error: Invalid message format for SynthesisAgent. Message must contain `abstraction_agent`. Message: {message}")
              return
         
-        summary = self.generate_summary(message)
+        summary = self.generate_summary(message["content"])
 
         # Validate the output before sending
         if not isinstance(summary, str) or "Summary:" not in summary:
